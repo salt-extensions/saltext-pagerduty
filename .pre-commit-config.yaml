@@ -59,9 +59,9 @@ repos:
     rev: v2.37.2
     hooks:
       - id: pyupgrade
-        name: Rewrite Code to be Py3.8+
+        name: Rewrite Code to be Py3.6+
         args: [
-          --py38-plus
+          --py36-plus
         ]
         exclude: src/saltext/pagerduty/version.py
 

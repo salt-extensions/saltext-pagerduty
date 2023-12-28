@@ -9,4 +9,5 @@ _________________
     :toctree:
 
     saltext.pagerduty.modules.pagerduty
+    saltext.pagerduty.modules.pagerduty_mod
     saltext.pagerduty.modules.pagerduty_util
