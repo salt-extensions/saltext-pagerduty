@@ -34,6 +34,8 @@ For example:
                   escalation_delay_in_minutes: 15
 """
 
+from salt.exceptions import CommandExecutionError
+
 
 def __virtual__():
     """
@@ -96,7 +98,7 @@ def present(profile="pagerduty", subdomain=None, api_key=None, **kwargs):
                 if schedule:
                     target_id = schedule["schedule"]["id"]
             if target_id is None:
-                raise Exception(f"unidentified target: {target}")
+                raise CommandExecutionError(f"unidentified target: {target}")
             target["id"] = target_id
 
     r = __salt__["pagerduty_util.resource_present"](
@@ -126,31 +128,30 @@ def _diff(state_data, resource_object):
     returns the dict to pass to the PD API to perform the update, or empty dict if no update.
     """
     objects_differ = None
+    resource_value = ...
 
     for k, v in state_data.items():
         if k == "escalation_rules":
             v = _escalation_rules_to_string(v)
             resource_value = _escalation_rules_to_string(resource_object[k])
+        elif k not in resource_object.keys():
+            objects_differ = True
         else:
-            if k not in resource_object.keys():
-                objects_differ = True
-            else:
-                resource_value = resource_object[k]
-        if v != resource_value:
+            resource_value = resource_object[k]
+        if resource_value is not ... and v != resource_value:
             objects_differ = f"{k} {v} {resource_value}"
             break
 
     if objects_differ:
         return state_data
-    else:
-        return {}
+    return {}
 
 
 def _escalation_rules_to_string(escalation_rules):
     "convert escalation_rules dict to a string for comparison"
     result = ""
     for rule in escalation_rules:
-        result += "escalation_delay_in_minutes: {} ".format(rule["escalation_delay_in_minutes"])
+        result += f"escalation_delay_in_minutes: {rule['escalation_delay_in_minutes']} "
         for target in rule["targets"]:
-            result += "{}:{} ".format(target["type"], target["id"])
+            result += f"{target['type']}:{target['id']} "
     return result

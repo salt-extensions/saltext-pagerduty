@@ -15,6 +15,7 @@ Module for Firing Events via PagerDuty
             pagerduty.api_key: F3Rbyjbve43rfFWf2214
             pagerduty.subdomain: mysubdomain
 """
+
 import salt.utils.functools
 import salt.utils.json
 import salt.utils.pagerduty

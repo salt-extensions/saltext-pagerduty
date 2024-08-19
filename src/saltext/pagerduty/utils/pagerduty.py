@@ -15,6 +15,7 @@ Library for interacting with PagerDuty API
             pagerduty.subdomain: mysubdomain
             pagerduty.api_key: F3Rbyjbve43rfFWf2214
 """
+
 import logging
 
 import salt.utils.http
@@ -63,10 +64,10 @@ def query(
         creds["pagerduty.subdomain"] = subdomain
 
     if client_url is None:
-        client_url = "https://{}.pagerduty.com".format(creds["pagerduty.subdomain"])
+        client_url = f"https://{creds['pagerduty.subdomain']}.pagerduty.com"
 
     if url is None:
-        url = "https://{}.pagerduty.com/{}/{}".format(creds["pagerduty.subdomain"], path, action)
+        url = f"https://{creds['pagerduty.subdomain']}.pagerduty.com/{path}/{action}"
 
     if params is None:
         params = {}
@@ -91,7 +92,7 @@ def query(
 
     headers = {
         "User-Agent": user_agent,
-        "Authorization": "Token token={}".format(creds["pagerduty.api_key"]),
+        "Authorization": f"Token token={creds['pagerduty.api_key']}",
     }
     if method == "GET":
         data = {}
