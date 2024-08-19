@@ -10,5 +10,4 @@ _________________
     :toctree:
 
     pagerduty
-    pagerduty_mod
     pagerduty_util
