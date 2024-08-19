@@ -16,7 +16,9 @@ Salt Extension for interacting with PagerDuty
   :hidden:
 
   ref/modules/index
+  ref/runners/index
   ref/states/index
+  ref/utils/index
 
 .. toctree::
   :maxdepth: 2

@@ -17,6 +17,7 @@ Module for manageing PagerDuty resource
 For PagerDuty API details, see https://developer.pagerduty.com/documentation/rest
 
 """
+
 import requests
 import salt.utils.json
 
@@ -150,7 +151,7 @@ def _query(
         }
 
     if url is None:
-        url = "https://{}.pagerduty.com/{}/{}".format(creds["pagerduty.subdomain"], path, action)
+        url = f"https://{creds['pagerduty.subdomain']}.pagerduty.com/{path}/{action}"
 
     if params is None:
         params = {}
@@ -158,11 +159,13 @@ def _query(
     if data is None:
         data = {}
 
-    headers = {"Authorization": "Token token={}".format(creds["pagerduty.api_key"])}
+    headers = {"Authorization": f"Token token={creds['pagerduty.api_key']}"}
 
     if method != "GET":
         headers["Content-type"] = "application/json"
 
+    # FIXME
+    # pylint: disable=missing-timeout
     result = requests.request(
         method,
         url,
@@ -185,6 +188,8 @@ def _query(
             limit = 100
             data["offset"] = offset
             data["limit"] = limit
+            # FIXME
+            # pylint: disable=missing-timeout
             next_page_results = requests.request(
                 method,
                 url,
@@ -224,6 +229,12 @@ def get_resource(
     """
     Get any single pagerduty resource by key.
 
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt myminion pagerduty.get_resource users "$key" '[name, email]'
+
     We allow flexible lookup by any of a list of identifier_fields.
     So, for example, you can look up users by email address or name by calling:
 
@@ -256,7 +267,7 @@ def get_resource(
                 # so, now that we found the schedule, we need to get all the data for it.
                 if resource_name == "schedules":
                     full_resource_info = _query(
-                        action="{}/{}".format(resource_name, resource["id"]),
+                        action=f"{resource_name}/{resource['id']}",
                         profile=profile,
                         subdomain=subdomain,
                         api_key=api_key,
@@ -278,6 +289,8 @@ def create_or_update_resource(
     """
     create or update any pagerduty resource
     Helper method for present().
+
+    CLI Example:
 
     Determining if two resources are the same is different for different PD resource, so this method accepts a diff function.
     The diff function will be invoked as diff(state_information, object_returned_from_pagerduty), and
@@ -364,6 +377,12 @@ def delete_resource(
 
     Helper method for absent()
 
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt myminion pagerduty.delete_resource users "$key" '[id, name, email]'
+
     example:
             delete_resource("users", key, ["id","name","email"]) # delete by id or name or email
 
@@ -400,6 +419,8 @@ def resource_present(
     with a custom diff function.
 
     This method calls create_or_update_resource() and formats the result as a salt state return value.
+
+    CLI Example:
 
     example:
             resource_present("users", ["id","name","email"])
@@ -438,6 +459,8 @@ def resource_absent(
     with a custom diff function.
 
     This method calls delete_resource() and formats the result as a salt state return value.
+
+    CLI Example:
 
     example:
             resource_absent("users", ["id","name","email"])

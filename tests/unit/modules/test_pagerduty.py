@@ -3,13 +3,14 @@
 
     Test cases for salt.modules.pagerduty
 """
+
+from unittest.mock import MagicMock
+from unittest.mock import patch
+
 import pytest
 import salt.modules.pagerduty as pagerduty
 import salt.utils.json
 import salt.utils.pagerduty
-
-from tests.support.mock import MagicMock
-from tests.support.mock import patch
 
 
 @pytest.fixture
