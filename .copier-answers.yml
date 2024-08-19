@@ -12,6 +12,7 @@ integration_name: PagerDuty
 license: apache
 loaders:
   - module
+  - runner
   - state
 max_salt_version: 3007
 no_saltext_namespace: false
