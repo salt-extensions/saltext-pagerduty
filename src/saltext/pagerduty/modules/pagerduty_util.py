@@ -129,7 +129,6 @@ def _query(
     path="api/v1",
     action=None,
     api_key=None,
-    service=None,
     params=None,
     data=None,
     subdomain=None,
@@ -332,36 +331,34 @@ def create_or_update_resource(
             subdomain=subdomain,
             api_key=api_key,
         )
+    # update
+    data_to_update = {}
+    # if differencing function is provided, use it
+    if diff:
+        data_to_update = diff(data, resource)
+    # else default to naive key-value walk of the dicts
     else:
-        # update
-        data_to_update = {}
-        # if differencing function is provided, use it
-        if diff:
-            data_to_update = diff(data, resource)
-        # else default to naive key-value walk of the dicts
-        else:
-            for k, v in data.items():
-                if k.startswith("_"):
-                    continue
-                resource_value = resource.get(k, None)
-                if resource_value is not None and resource_value != v:
-                    data_to_update[k] = v
-        if data_to_update:
-            if __opts__["test"]:
-                return "would update"
-            # flush the resource_cache, because we're modifying a resource
-            del __context__["pagerduty_util.resource_cache"][resource_name]
-            resource_id = _get_resource_id(resource)
-            return _query(
-                method="PUT",
-                action=f"{resource_name}/{resource_id}",
-                data=data_to_update,
-                profile=profile,
-                subdomain=subdomain,
-                api_key=api_key,
-            )
-        else:
-            return True
+        for k, v in data.items():
+            if k.startswith("_"):
+                continue
+            resource_value = resource.get(k, None)
+            if resource_value is not None and resource_value != v:
+                data_to_update[k] = v
+    if data_to_update:
+        if __opts__["test"]:
+            return "would update"
+        # flush the resource_cache, because we're modifying a resource
+        del __context__["pagerduty_util.resource_cache"][resource_name]
+        resource_id = _get_resource_id(resource)
+        return _query(
+            method="PUT",
+            action=f"{resource_name}/{resource_id}",
+            data=data_to_update,
+            profile=profile,
+            subdomain=subdomain,
+            api_key=api_key,
+        )
+    return True
 
 
 def delete_resource(
@@ -401,8 +398,7 @@ def delete_resource(
             subdomain=subdomain,
             api_key=api_key,
         )
-    else:
-        return True
+    return True
 
 
 def resource_present(
@@ -481,12 +477,12 @@ def resource_absent(
             ret["result"] = True
             ret["comment"] = f"{v} deleted"
             return ret
-        elif result is True:
+        if result is True:
             continue
-        elif __opts__["test"]:
+        if __opts__["test"]:
             ret["comment"] = result
             return ret
-        elif "error" in result:
+        if "error" in result:
             ret["result"] = False
             ret["comment"] = result
             return ret

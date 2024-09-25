@@ -108,6 +108,7 @@ def query(
         decode=False,
         text=True,
         opts=opts,
+        verify_ssl=verify_ssl,
     )
 
     return result["text"]
