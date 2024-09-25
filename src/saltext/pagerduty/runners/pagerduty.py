@@ -17,8 +17,9 @@ Runner Module for Firing Events via PagerDuty
 
 import salt.utils.functools
 import salt.utils.json
-import salt.utils.pagerduty
 import salt.utils.yaml
+
+from saltext.pagerduty.utils import pagerduty
 
 
 def __virtual__():
@@ -36,7 +37,7 @@ def list_services(profile=None, api_key=None):
 
         salt-run pagerduty.list_services my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "services", "name", __salt__["config.option"](profile), api_key, opts=__opts__
     )
 
@@ -49,7 +50,7 @@ def list_incidents(profile=None, api_key=None):
 
         salt-run pagerduty.list_incidents my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "incidents", "id", __salt__["config.option"](profile), api_key, opts=__opts__
     )
 
@@ -62,7 +63,7 @@ def list_users(profile=None, api_key=None):
 
         salt-run pagerduty.list_users my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "users", "id", __salt__["config.option"](profile), api_key, opts=__opts__
     )
 
@@ -75,7 +76,7 @@ def list_schedules(profile=None, api_key=None):
 
         salt-run pagerduty.list_schedules my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "schedules", "id", __salt__["config.option"](profile), api_key, opts=__opts__
     )
 
@@ -89,7 +90,7 @@ def list_windows(profile=None, api_key=None):
         salt-run pagerduty.list_windows my-pagerduty-account
         salt-run pagerduty.list_maintenance_windows my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "maintenance_windows",
         "id",
         __salt__["config.option"](profile),
@@ -113,7 +114,7 @@ def list_policies(profile=None, api_key=None):
         salt-run pagerduty.list_policies my-pagerduty-account
         salt-run pagerduty.list_escalation_policies my-pagerduty-account
     """
-    return salt.utils.pagerduty.list_items(
+    return pagerduty.list_items(
         "escalation_policies",
         "id",
         __salt__["config.option"](profile),
@@ -162,7 +163,7 @@ def create_event(service_key=None, description=None, details=None, incident_key=
             details = {"details": details}
 
     ret = salt.utils.json.loads(
-        salt.utils.pagerduty.query(
+        pagerduty.query(
             method="POST",
             profile_dict=__salt__["config.option"](profile),
             api_key=service_key,

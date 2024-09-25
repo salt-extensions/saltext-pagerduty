@@ -6,7 +6,8 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
-import salt.states.pagerduty as pagerduty
+
+from saltext.pagerduty.states import pagerduty
 
 
 @pytest.fixture

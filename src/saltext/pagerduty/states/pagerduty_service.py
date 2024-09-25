@@ -115,5 +115,4 @@ def _diff(state_data, resource_object):
 
     if objects_differ:
         return state_data
-    else:
-        return {}
+    return {}
