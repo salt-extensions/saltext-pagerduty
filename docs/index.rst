@@ -1,4 +1,4 @@
-``saltext-pagerduty``: Integrate Salt with Pagerduty
+``saltext-pagerduty``: Integrate Salt with PagerDuty
 ====================================================
 
 Salt Extension for interacting with PagerDuty
