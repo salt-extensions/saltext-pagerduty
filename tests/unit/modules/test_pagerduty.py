@@ -1,7 +1,7 @@
 """
-    :codeauthor: Rahul Handay <rahulha@saltstack.com>
+:codeauthor: Rahul Handay <rahulha@saltstack.com>
 
-    Test cases for salt.modules.pagerduty
+Test cases for salt.modules.pagerduty
 """
 
 from unittest.mock import MagicMock
